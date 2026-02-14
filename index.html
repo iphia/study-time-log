@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>순공부시간 기록</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --text:#e7eef7;
+      --muted:#a7b3c4;
+      --good:#47d18c;
+      --warn:#ffcc66;
+      --bad:#ff6a6a;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: radial-gradient(900px 500px at 20% 0%, rgba(106,169,255,.14), transparent 60%),
+                  radial-gradient(700px 420px at 90% 10%, rgba(71,209,140,.12), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .top{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:stretch;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h1{
+      font-size: 18px;
+      margin:0 0 10px 0;
+      letter-spacing: -0.2px;
+    }
+    .muted{color:var(--muted)}
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor:pointer;
+      transition: .15s transform, .15s background, .15s border;
+      width: 100%;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      border-color: rgba(106,169,255,.45);
+      background: rgba(106,169,255,.16);
+    }
+    .btn.running{
+      border-color: rgba(71,209,140,.55);
+      background: rgba(71,209,140,.16);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .col{display:flex; flex-direction:column; gap:8px;}
+    .stat{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      font-size: 12.5px;
+      color: var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .pill b{color:var(--text)}
+    .pill.good{
+      border-color: rgba(71,209,140,.40);
+      background: rgba(71,209,140,.12);
+      color: var(--text);
+    }
+    .pill.warn{
+      border-color: rgba(255,204,102,.40);
+      background: rgba(255,204,102,.12);
+      color: var(--text);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 2fr;
+      gap:14px;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    /* Calendar */
+    .cal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .cal-title{display:flex; flex-direction:column; gap:4px;}
+    .cal-title .month{font-size: 16px; font-weight: 800; letter-spacing: -0.2px;}
+    .cal-title .avg{font-size: 12.5px; color: var(--muted);}
+    .nav{display:flex; gap:8px;}
+    .iconbtn{
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      cursor:pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .iconbtn:hover{background: rgba(255,255,255,.075)}
+    .dow{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:8px;
+      margin-bottom:8px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:-0.2px;
+    }
+    .dow div{text-align:center; padding: 4px 0;}
+    .days{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:8px;
+    }
+    .day{
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      min-height: 78px;
+      padding: 10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      cursor:pointer;
+      position:relative;
+      transition:.15s background, .15s border, .15s transform;
+    }
+    .day:hover{transform: translateY(-1px); background: rgba(255,255,255,.055)}
+    .day.out{opacity:.42}
+    .day .d{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:8px;
+      font-weight:800;
+    }
+    .day .d span{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight:700;
+    }
+    .day .t{
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      color: var(--text);
+      opacity:.95;
+    }
+    .day.today{
+      border-color: rgba(106,169,255,.55);
+      background: rgba(106,169,255,.10);
+    }
+    .day.selected{outline: 2px solid rgba(71,209,140,.55);}
+    .badge{
+      position:absolute;
+      right:10px; top:10px;
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+    }
+
+    /* Sessions */
+    .list{display:flex; flex-direction:column; gap:10px;}
+    .item{
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .item .left{display:flex; flex-direction:column; gap:4px;}
+    .item .dur{
+      font-variant-numeric: tabular-nums;
+      font-weight:800;
+      color: var(--good);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .item small{color:var(--muted)}
+    .danger{
+      border-color: rgba(255,106,106,.35);
+      background: rgba(255,106,106,.08);
+      color: var(--text);
+    }
+    .minirow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+    .minirow .btn{
+      width:auto;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .trash{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .trash:hover{background: rgba(255,255,255,.08)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="card" style="flex:1 1 330px;">
+        <h1>순공부시간 기록</h1>
+        <div class="row">
+          <div class="col" style="flex:1;">
+            <div class="stat">
+              <div class="pill">상태: <b id="statusText">대기</b></div>
+              <div class="pill">시작: <b id="startText">-</b></div>
+              <div class="pill" id="backupPill">백업: <b id="backupText">없음</b></div>
+            </div>
+            <div class="muted" style="font-size:12.5px; line-height:1.35;">
+              시작 누르고 앱 꺼져도 OK. 다시 열어서 종료 누르면 그 사이 시간 기록됨. (단축키: <span class="kbd">Space</span>)
+            </div>
+            <div class="muted" id="backupHint" style="font-size:12.5px; line-height:1.35; margin-top:6px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn primary" id="toggleBtn">공부 시작</button>
+        </div>
+        <div class="minirow">
+          <button class="btn" id="exportBtn">내보내기(JSON)</button>
+          <button class="btn" id="importBtn">가져오기(JSON)</button>
+          <button class="btn danger" id="resetBtn">전체 삭제</button>
+        </div>
+        <input type="file" id="fileInput" accept="application/json" style="display:none;" />
+      </div>
+
+      <div class="card" style="flex:1 1 330px;">
+        <h1>요약</h1>
+        <div class="list">
+          <div class="item">
+            <div class="left">
+              <div><b id="sumMonth">이번 달</b></div>
+              <small>월 누적</small>
+            </div>
+            <div class="dur" id="monthTotal">0:00</div>
+          </div>
+          <div class="item">
+            <div class="left">
+              <div><b>오늘</b></div>
+              <small>오늘 누적</small>
+            </div>
+            <div class="dur" id="todayTotal">0:00</div>
+          </div>
+          <div class="item">
+            <div class="left">
+              <div><b>선택한 날짜</b></div>
+              <small>선택 누적</small>
+            </div>
+            <div class="dur" id="selectedTotal">0:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="cal-head">
+          <div class="cal-title">
+            <div class="month" id="monthLabel">0000년 00월</div>
+            <div class="avg">월 평균 공부시간: <b id="monthAvg">0:00</b></div>
+          </div>
+          <div class="nav">
+            <button class="iconbtn" id="prevBtn" title="이전 달">‹</button>
+            <button class="iconbtn" id="todayBtn" title="이번 달로">●</button>
+            <button class="iconbtn" id="nextBtn" title="다음 달">›</button>
+          </div>
+        </div>
+
+        <div class="dow">
+          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+        </div>
+        <div class="days" id="days"></div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col">
+            <h1 style="margin:0;">세션 목록</h1>
+            <div class="muted" style="font-size:12.5px;">날짜를 클릭하면 그날 기록이 보여. (각 기록 오른쪽 🗑 로 1개 삭제)</div>
+          </div>
+          <div class="pill">선택: <b id="selectedLabel">-</b></div>
+        </div>
+        <div class="list" id="sessionList"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const LS_KEY = "study_sessions_v1";
+  const RUN_KEY = "study_running_v1";
+  const BACKUP_KEY = "study_last_backup_v1";
+
+  /** session: {id:string, start:number(ms), end:number(ms), ms:number} */
+  let sessions = loadSessions();
+  let runningStart = loadRunningStart(); // number | null
+  let lastBackup = loadLastBackup(); // number | null
+
+  let view = (() => {
+    const now = new Date();
+    return { y: now.getFullYear(), m: now.getMonth() };
+  })();
+
+  let selected = (() => {
+    const now = new Date();
+    return toDateKey(now);
+  })();
+
+  // ---------- helpers ----------
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function fmtHM(ms){
+    ms = Math.max(0, ms|0);
+    const totalMin = Math.floor(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return `${h}:${pad2(m)}`;
+  }
+  function fmtDateTime(ts){
+    const d = new Date(ts);
+    const y = d.getFullYear();
+    const m = pad2(d.getMonth()+1);
+    const day = pad2(d.getDate());
+    return `${y}-${m}-${day} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  }
+  function toDateKey(d){
+    const y = d.getFullYear();
+    const m = pad2(d.getMonth()+1);
+    const day = pad2(d.getDate());
+    return `${y}-${m}-${day}`;
+  }
+  function dateKeyToDate(key){
+    const [y,m,d] = key.split("-").map(Number);
+    return new Date(y, m-1, d);
+  }
+  function isSameMonth(aKey, y, m){
+    const d = dateKeyToDate(aKey);
+    return d.getFullYear()===y && d.getMonth()===m;
+  }
+  function daysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+  function daysSince(ts){
+    if(!ts) return null;
+    const ms = Date.now() - ts;
+    return Math.floor(ms / (24*60*60*1000));
+  }
+  function uid(){
+    // 충돌 거의 없는 가벼운 id
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+  }
+
+  // ---------- storage ----------
+  function loadSessions(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return [];
+      return arr
+        .filter(x => x && typeof x.start==="number" && typeof x.end==="number" && typeof x.ms==="number")
+        .map(x => ({ id: (typeof x.id==="string" ? x.id : uid()), start:x.start, end:x.end, ms:x.ms }))
+        .sort((a,b)=>a.start-b.start);
+    }catch{
+      return [];
+    }
+  }
+  function saveSessions(){ localStorage.setItem(LS_KEY, JSON.stringify(sessions)); }
+
+  function loadRunningStart(){
+    const raw = localStorage.getItem(RUN_KEY);
+    if(!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+  function saveRunningStart(n){
+    if(n==null) localStorage.removeItem(RUN_KEY);
+    else localStorage.setItem(RUN_KEY, String(n));
+  }
+
+  function loadLastBackup(){
+    const raw = localStorage.getItem(BACKUP_KEY);
+    if(!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+  function saveLastBackup(ts){
+    if(ts==null){
+      localStorage.removeItem(BACKUP_KEY);
+      lastBackup = null;
+    }else{
+      localStorage.setItem(BACKUP_KEY, String(ts));
+      lastBackup = ts;
+    }
+  }
+
+  // Split session by date boundaries (자정 분할)
+  function splitByMidnight(start, end){
+    const out = [];
+    let cur = start;
+    while(cur < end){
+      const d = new Date(cur);
+      const nextMidnight = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1).getTime();
+      const cut = Math.min(end, nextMidnight);
+      out.push({ start: cur, end: cut, ms: cut - cur });
+      cur = cut;
+    }
+    return out;
+  }
+
+  function buildDailyTotals(){
+    const map = new Map();
+    for(const s of sessions){
+      const k = toDateKey(new Date(s.start));
+      map.set(k, (map.get(k)||0) + s.ms);
+    }
+    return map;
+  }
+
+  function getSessionsForDateKey(key){
+    const start = dateKeyToDate(key).getTime();
+    const end = dateKeyToDate(key);
+    end.setDate(end.getDate()+1);
+    const endTs = end.getTime();
+    return sessions.filter(s => s.start >= start && s.start < endTs);
+  }
+
+  // ---------- UI refs ----------
+  const statusText = document.getElementById("statusText");
+  const startText = document.getElementById("startText");
+  const toggleBtn = document.getElementById("toggleBtn");
+
+  const monthLabel = document.getElementById("monthLabel");
+  const monthAvg = document.getElementById("monthAvg");
+  const daysEl = document.getElementById("days");
+
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const todayBtn = document.getElementById("todayBtn");
+
+  const monthTotal = document.getElementById("monthTotal");
+  const todayTotal = document.getElementById("todayTotal");
+  const selectedTotal = document.getElementById("selectedTotal");
+
+  const selectedLabel = document.getElementById("selectedLabel");
+  const sessionList = document.getElementById("sessionList");
+
+  const exportBtn = document.getElementById("exportBtn");
+  const importBtn = document.getElementById("importBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const fileInput = document.getElementById("fileInput");
+
+  const backupPill = document.getElementById("backupPill");
+  const backupText = document.getElementById("backupText");
+  const backupHint = document.getElementById("backupHint");
+
+  // ---------- actions ----------
+  function startStudy(){
+    if(runningStart != null) return;
+    runningStart = Date.now();
+    saveRunningStart(runningStart);
+    renderAll();
+  }
+
+  function stopStudy(){
+    if(runningStart == null) return;
+    const start = runningStart;
+    const end = Date.now();
+
+    runningStart = null;
+    saveRunningStart(null);
+
+    if(end <= start + 2000){
+      renderAll();
+      return;
+    }
+
+    const parts = splitByMidnight(start, end);
+    for(const p of parts){
+      sessions.push({ id: uid(), ...p });
+    }
+    sessions.sort((a,b)=>a.start-b.start);
+    saveSessions();
+
+    // 종료한 날짜로 자동 이동
+    selected = toDateKey(new Date(end));
+    view = { y: new Date(end).getFullYear(), m: new Date(end).getMonth() };
+
+    renderAll();
+  }
+
+  function toggleStudy(){
+    if(runningStart == null) startStudy();
+    else stopStudy();
+  }
+
+  function deleteSessionById(id){
+    const idx = sessions.findIndex(s => s.id === id);
+    if(idx < 0) return;
+    const ok = confirm("이 기록 하나만 삭제할까?");
+    if(!ok) return;
+
+    sessions.splice(idx, 1);
+    saveSessions();
+    renderAll();
+  }
+
+  function setViewMonth(y,m){
+    view.y = y; view.m = clamp(m,0,11);
+    renderAll();
+  }
+
+  function goToday(){
+    const now = new Date();
+    view = { y: now.getFullYear(), m: now.getMonth() };
+    selected = toDateKey(now);
+    renderAll();
+  }
+
+  function onSelectDate(key){
+    selected = key;
+    const d = dateKeyToDate(key);
+    view = { y: d.getFullYear(), m: d.getMonth() };
+    renderAll();
+  }
+
+  function exportJSON(){
+    const payload = {
+      version: 2,
+      exportedAt: Date.now(),
+      sessions,
+      runningStart
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `study-sessions-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    // export == backup done
+    saveLastBackup(Date.now());
+    renderBackup();
+  }
+
+  function importJSONFile(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const obj = JSON.parse(String(reader.result||""));
+        if(!obj || !Array.isArray(obj.sessions)) throw new Error("bad");
+        const imported = obj.sessions
+          .filter(x => x && typeof x.start==="number" && typeof x.end==="number" && typeof x.ms==="number")
+          .map(x => ({ id: (typeof x.id==="string" ? x.id : uid()), start:x.start, end:x.end, ms:x.ms }));
+
+        sessions = imported.sort((a,b)=>a.start-b.start);
+        saveSessions();
+
+        // 안전하게 러닝은 끔
+        runningStart = null;
+        saveRunningStart(null);
+
+        renderAll();
+        alert("가져오기 완료!");
+      }catch{
+        alert("가져오기 실패: 파일 형식이 이상해.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function resetAll(){
+    const ok = confirm("진짜 전체 기록 삭제할 거야?");
+    if(!ok) return;
+    sessions = [];
+    runningStart = null;
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(RUN_KEY);
+    localStorage.removeItem(BACKUP_KEY);
+    lastBackup = null;
+    renderAll();
+  }
+
+  // ---------- render ----------
+  function renderTop(){
+    if(runningStart == null){
+      statusText.textContent = "대기";
+      toggleBtn.textContent = "공부 시작";
+      toggleBtn.classList.remove("running");
+      toggleBtn.classList.add("primary");
+      startText.textContent = "-";
+    }else{
+      statusText.textContent = "공부 중";
+      toggleBtn.textContent = "공부 종료 + 기록";
+      toggleBtn.classList.add("running");
+      toggleBtn.classList.remove("primary");
+      startText.textContent = fmtDateTime(runningStart);
+    }
+  }
+
+  function renderBackup(){
+    const d = daysSince(lastBackup);
+    backupPill.classList.remove("warn","good");
+
+    if(lastBackup == null){
+      backupText.textContent = "없음";
+      backupPill.classList.add("warn");
+      backupHint.textContent = "백업 기록이 없어. 중요한 기록이면 지금 한 번 내보내기 해두는 게 안전해.";
+      return;
+    }
+
+    const age = d ?? 0;
+    backupText.textContent = `${fmtDateTime(lastBackup)} (${age}일 전)`;
+
+    if(age >= 7){
+      backupPill.classList.add("warn");
+      backupHint.textContent = `마지막 백업이 ${age}일 전이야. 오늘 내보내기 한 번 눌러두면 마음 편함.`;
+    }else{
+      backupPill.classList.add("good");
+      backupHint.textContent = "";
+    }
+  }
+
+  function renderCalendar(){
+    const y = view.y, m = view.m;
+    monthLabel.textContent = `${y}년 ${m+1}월`;
+
+    const totals = buildDailyTotals();
+    const first = new Date(y,m,1);
+    const firstDow = first.getDay();
+    const dim = daysInMonth(y,m);
+
+    const prevDim = daysInMonth(y, m-1 < 0 ? 11 : m-1);
+    const cells = [];
+
+    for(let i=0;i<42;i++){
+      const dayNum = i - firstDow + 1;
+      let cellDate, out=false;
+
+      if(dayNum < 1){
+        const pm = (m-1+12)%12;
+        const py = m===0 ? y-1 : y;
+        const d = prevDim + dayNum;
+        cellDate = new Date(py, pm, d);
+        out = true;
+      }else if(dayNum > dim){
+        const nm = (m+1)%12;
+        const ny = m===11 ? y+1 : y;
+        const d = dayNum - dim;
+        cellDate = new Date(ny, nm, d);
+        out = true;
+      }else{
+        cellDate = new Date(y,m,dayNum);
+      }
+
+      const key = toDateKey(cellDate);
+      const ms = totals.get(key) || 0;
+
+      cells.push({ key, date: cellDate, out, ms });
+    }
+
+    let monthSum = 0;
+    for(const [k,ms] of totals.entries()){
+      if(isSameMonth(k, y, m)) monthSum += ms;
+    }
+    monthAvg.textContent = fmtHM(Math.floor(monthSum / dim));
+
+    daysEl.innerHTML = "";
+    const todayKey = toDateKey(new Date());
+
+    for(const c of cells){
+      const el = document.createElement("div");
+      el.className = "day" + (c.out ? " out" : "");
+      if(c.key === todayKey) el.classList.add("today");
+      if(c.key === selected) el.classList.add("selected");
+
+      const d = c.date.getDate();
+      el.innerHTML = `
+        <div class="d">
+          <div>${d}</div>
+          <span>${c.out ? " " : ""}</span>
+        </div>
+        <div class="t">${c.ms>0 ? fmtHM(c.ms) : ""}</div>
+        ${c.ms>0 ? `<div class="badge">+</div>` : ``}
+      `;
+      el.addEventListener("click", () => onSelectDate(c.key));
+      daysEl.appendChild(el);
+    }
+  }
+
+  function renderSummary(){
+    const totals = buildDailyTotals();
+    const now = new Date();
+    const todayKey = toDateKey(now);
+
+    let monthSum = 0;
+    for(const [k,ms] of totals.entries()){
+      if(isSameMonth(k, view.y, view.m)) monthSum += ms;
+    }
+    monthTotal.textContent = fmtHM(monthSum);
+
+    const todayMs = totals.get(todayKey) || 0;
+    todayTotal.textContent = fmtHM(todayMs);
+
+    const selMs = totals.get(selected) || 0;
+    selectedTotal.textContent = fmtHM(selMs);
+
+    selectedLabel.textContent = selected;
+    document.getElementById("sumMonth").textContent = `${view.y}년 ${view.m+1}월`;
+  }
+
+  function renderSessions(){
+    const list = getSessionsForDateKey(selected);
+    sessionList.innerHTML = "";
+
+    if(list.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "muted";
+      empty.style.padding = "6px 2px";
+      empty.textContent = "이 날짜엔 기록이 없어.";
+      sessionList.appendChild(empty);
+      return;
+    }
+
+    const reversed = [...list].sort((a,b)=>b.start-a.start);
+
+    for(const s of reversed){
+      const item = document.createElement("div");
+      item.className = "item";
+
+      item.innerHTML = `
+        <div class="left">
+          <div><b>${fmtDateTime(s.start).slice(11)}</b> ~ <b>${fmtDateTime(s.end).slice(11)}</b></div>
+          <small>${new Date(s.start).toLocaleDateString("ko-KR")}</small>
+        </div>
+        <div class="dur">
+          <span>${fmtHM(s.ms)}</span>
+          <button class="trash" title="이 기록 삭제">🗑</button>
+        </div>
+      `;
+
+      const btn = item.querySelector(".trash");
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteSessionById(s.id);
+      });
+
+      sessionList.appendChild(item);
+    }
+  }
+
+  function renderAll(){
+    renderTop();
+    renderBackup();
+    renderCalendar();
+    renderSummary();
+    renderSessions();
+  }
+
+  // ---------- wire up ----------
+  toggleBtn.addEventListener("click", toggleStudy);
+  prevBtn.addEventListener("click", () => {
+    let y=view.y, m=view.m-1;
+    if(m<0){ m=11; y--; }
+    setViewMonth(y,m);
+  });
+  nextBtn.addEventListener("click", () => {
+    let y=view.y, m=view.m+1;
+    if(m>11){ m=0; y++; }
+    setViewMonth(y,m);
+  });
+  todayBtn.addEventListener("click", goToday);
+
+  exportBtn.addEventListener("click", exportJSON);
+  importBtn.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    if(f) importJSONFile(f);
+    fileInput.value = "";
+  });
+  resetBtn.addEventListener("click", resetAll);
+
+  window.addEventListener("keydown", (e) => {
+    if(e.code === "Space"){
+      const tag = (document.activeElement && document.activeElement.tagName) || "";
+      if(tag === "INPUT" || tag === "TEXTAREA") return;
+      e.preventDefault();
+      toggleStudy();
+    }
+  });
+
+  // initial render
+  renderAll();
+})();
+</script>
+</body>
+</html>
