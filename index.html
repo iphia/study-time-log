@@ -110,9 +110,33 @@
       grid-template-columns: 1fr 2fr;
       gap:14px;
     }
+    @media (max-width: 430px){
+  .wrap{ padding: 12px; }
+  .card{ padding: 12px; }
+
+  .dow, .days{ gap: 6px; }      /* 8px -> 6px */
+  .day{
+    min-height: 66px;          /* 78px -> 66px */
+    padding: 8px;              /* 10px -> 8px */
+    border-radius: 12px;
+  }
+
+  .dow div{ font-size: 11px; }
+  .day .d{ font-size: 13px; }
+  .day .t{ font-size: 12px; }
+
+  .iconbtn{
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .nav{ margin-left: auto; }   /* 헤더 줄바꿈 시 오른쪽 정렬 */
+}
     @media (max-width: 860px){
       .grid{grid-template-columns:1fr}
     }
+    
 
     /* Calendar */
     .cal-head{
@@ -121,6 +145,8 @@
       align-items:center;
       gap:10px;
       margin-bottom:10px;
+
+      flex-wrap: wrap; /* ✅ 좁으면 아래로 내려가게 */
     }
     .cal-title{display:flex; flex-direction:column; gap:4px;}
     .cal-title .month{font-size: 16px; font-weight: 800; letter-spacing: -0.2px;}
@@ -139,7 +165,7 @@
     .iconbtn:hover{background: rgba(255,255,255,.075)}
     .dow{
       display:grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap:8px;
       margin-bottom:8px;
       color: var(--muted);
@@ -149,10 +175,11 @@
     .dow div{text-align:center; padding: 4px 0;}
     .days{
       display:grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap:8px;
     }
     .day{
+      min-width: 0;  /* ✅ iOS에서 셀이 폭 못 줄이고 튀는 거 방지 */
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.03);
