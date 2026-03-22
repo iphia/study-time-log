@@ -6,320 +6,296 @@
   <title>순공부시간 기록</title>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <style>
-    :root{
-      --bg:#0b0f14;
-      --text:#e7eef7;
-      --muted:#a7b3c4;
-      --good:#47d18c;
-      --warn:#ffcc66;
-      --bad:#ff6a6a;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 16px;
+    :root {
+      --bg: #182232; 
+      --surface: #24334a; 
+      --surface-hover: #2f415e;
+      --border: rgba(255, 255, 255, 0.05);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.4);
+      --good: #10b981;
+      --good-glow: rgba(16, 185, 129, 0.4);
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --shadow: 0 15px 30px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.15);
+      --radius: 16px; /* 둥글기도 살짝 줄임 */
     } 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: radial-gradient(900px 500px at 20% 0%, rgba(106,169,255,.14), transparent 60%),
-                  radial-gradient(700px 420px at 90% 10%, rgba(71,209,140,.12), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      min-height:100vh;
-    }
-    .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 18px;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-    .top{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:stretch;
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-    }
-    .card h1{
-      font-size: 18px;
-      margin:0 0 10px 0;
-      letter-spacing: -0.2px;
-    }
-    .muted{color:var(--muted)}
-    .btn{
-      appearance:none;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-weight: 700;
-      cursor:pointer;
-      transition: .15s transform, .15s background, .15s border;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 16px; /* 상하 여백 축소 */
+      display: flex;
+      flex-direction: column;
+      gap: 16px; /* 카드 간 간격 축소 */
       width: 100%;
     }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085)}
-    .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      border-color: rgba(106,169,255,.45);
-      background: rgba(106,169,255,.16);
+    .top {
+      display: flex;
+      gap: 16px; /* 상단 카드 간격 축소 */
+      flex-wrap: wrap;
+      align-items: stretch;
     }
-    .btn.running{
-      border-color: rgba(71,209,140,.55);
-      background: rgba(71,209,140,.16);
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px; /* 카드 내부 여백 축소 */
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.2);
     }
-    .col{display:flex; flex-direction:column; gap:8px;}
-    .stat{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .pill{
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.16);
-      font-size: 12.5px;
-      color: var(--muted);
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
+    .card h1 {
+      font-size: 18px; /* 타이틀 크기 살짝 축소 */
+      margin: 0 0 12px 0;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
-    .pill b{color:var(--text)}
-    .pill.good{
-      border-color: rgba(71,209,140,.40);
-      background: rgba(71,209,140,.12);
+    .muted { color: var(--muted); }
+    
+    /* Timer Display */
+    .timer-display {
+      font-size: 42px; /* 타이머 폰트 살짝 축소 */
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      margin: 4px 0 16px 0;
+      letter-spacing: -1px;
+    }
+    .timer-display.active {
+      color: var(--good);
+      text-shadow: 0 0 20px var(--good-glow);
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.05);
       color: var(--text);
+      padding: 12px 14px; /* 버튼 높이 축소 */
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: center;
     }
-    .pill.warn{
-      border-color: rgba(255,204,102,.40);
-      background: rgba(255,204,102,.12);
-      color: var(--text);
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+    .btn:active { transform: translateY(0px); }
+    
+    .btn.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+      font-size: 16px;
+      padding: 14px;
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
     }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 2fr;
-      gap:14px;
-    }
-    @media (max-width: 430px){
-  .wrap{ padding: 12px; }
-  .card{ padding: 12px; }
-
-  .dow, .days{ gap: 6px; }      /* 8px -> 6px */
-  .day{
-    min-height: 66px;          /* 78px -> 66px */
-    padding: 8px;              /* 10px -> 8px */
-    border-radius: 12px;
-  }
-
-  .dow div{ font-size: 11px; }
-  .day .d{ font-size: 13px; }
-  .day .t{ font-size: 12px; }
-
-  .iconbtn{
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-  }
-
-  .nav{ margin-left: auto; }   /* 헤더 줄바꿈 시 오른쪽 정렬 */
-}
-    @media (max-width: 860px){
-      .grid{grid-template-columns:1fr}
+    .btn.primary:hover {
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.35);
     }
     
+    .btn.running {
+      border-color: var(--good);
+      background: var(--good);
+      color: #fff;
+      font-size: 16px;
+      padding: 14px;
+      animation: pulse-border 2s infinite;
+    }
+
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 var(--good-glow); }
+      70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .col { display: flex; flex-direction: column; gap: 6px; }
+    .stat { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;}
+    
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .pill b { color: var(--text); }
+    .pill.good { border-color: var(--good); background: rgba(16, 185, 129, 0.08); color: var(--good); }
+    .pill.warn { border-color: var(--warn); background: rgba(245, 158, 11, 0.08); color: var(--warn); }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    
+    @media (max-width: 768px){
+      .grid { grid-template-columns: 1fr; }
+      .wrap { padding: 12px; gap: 12px; }
+      .top { gap: 12px; }
+      .card { padding: 16px; }
+      .timer-display { font-size: 36px; margin-bottom: 12px; }
+    }
 
     /* Calendar */
-    .cal-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-
-      flex-wrap: wrap; /* ✅ 좁으면 아래로 내려가게 */
+    .cal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
-    .cal-title{display:flex; flex-direction:column; gap:4px;}
-    .cal-title .month{font-size: 16px; font-weight: 800; letter-spacing: -0.2px;}
-    .cal-title .avg{font-size: 12.5px; color: var(--muted);}
-    .nav{display:flex; gap:8px;}
-    .iconbtn{
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+    .cal-title { display: flex; flex-direction: column; gap: 2px; }
+    .cal-title .month { font-size: 16px; font-weight: 800; }
+    .cal-title .avg { font-size: 12px; color: var(--muted); }
+    .nav { display: flex; gap: 6px; }
+    
+    .iconbtn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
       color: var(--text);
-      cursor:pointer;
-      font-size: 18px;
-      line-height: 1;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
     }
-    .iconbtn:hover{background: rgba(255,255,255,.075)}
-    .dow{
-      display:grid;
+    .iconbtn:hover { background: rgba(255,255,255,0.06); }
+    
+    .dow {
+      display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap:8px;
-      margin-bottom:8px;
+      gap: 6px;
+      margin-bottom: 8px;
       color: var(--muted);
       font-size: 12px;
-      letter-spacing:-0.2px;
+      font-weight: 600;
     }
-    .dow div{text-align:center; padding: 4px 0;}
-    .days{
-      display:grid;
+    .dow div { text-align: center; }
+    .days {
+      display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap:8px;
+      gap: 6px;
     }
-    .day{
-      min-width: 0;  /* ✅ iOS에서 셀이 폭 못 줄이고 튀는 거 방지 */
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      min-height: 78px;
-      padding: 10px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      cursor:pointer;
-      position:relative;
-      transition:.15s background, .15s border, .15s transform;
+    .day {
+      min-width: 0;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.1);
+      min-height: 68px; /* 달력 높이 축소 */
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
     }
-    .day:hover{transform: translateY(-1px); background: rgba(255,255,255,.055)}
-    .day.out{opacity:.42}
-    .day .d{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      gap:8px;
-      font-weight:800;
-    }
-    .day .d span{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight:700;
-    }
-    .day .t{
-      font-variant-numeric: tabular-nums;
-      font-size: 13px;
-      color: var(--text);
-      opacity:.95;
-    }
-    .day.today{
-      border-color: rgba(106,169,255,.55);
-      background: rgba(106,169,255,.10);
-    }
-    .day.selected{outline: 2px solid rgba(71,209,140,.55);}
-    .badge{
-      position:absolute;
-      right:10px; top:10px;
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color: var(--muted);
-    }
-
+    .day:hover { transform: translateY(-1px); background: rgba(255,255,255,0.05); }
+    .day.out { opacity: 0.2; }
+    .day .d { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 13px;}
+    .day .t { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--primary); font-weight: 700; margin-top: auto;}
+    .day.today { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
+    .day.selected { outline: 2px solid var(--good); outline-offset: -2px; }
+    
     /* Sessions */
-    .list{display:flex; flex-direction:column; gap:10px;}
-    .item{
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 10px 12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .item {
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
     }
-    .item .left{display:flex; flex-direction:column; gap:4px;}
-    .item .dur{
+    .item .left { display: flex; flex-direction: column; gap: 2px; }
+    .item .dur {
       font-variant-numeric: tabular-nums;
-      font-weight:800;
-      color: var(--good);
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .item small{color:var(--muted)}
-    .danger{
-      border-color: rgba(255,106,106,.35);
-      background: rgba(255,106,106,.08);
-      color: var(--text);
-    }
-    .minirow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-top:10px;
-    }
-    .minirow .btn{
-      width:auto;
-      padding: 10px 12px;
-      border-radius: 12px;
       font-weight: 800;
+      font-size: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      padding: 2px 6px;
-      border-radius: 8px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .trash{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+    .item small { color: var(--muted); font-size: 11px; }
+    
+    .minirow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .minirow .btn { width: auto; flex: 1; padding: 10px; font-size: 13px; }
+    .danger { border-color: rgba(239, 68, 68, 0.3); color: var(--bad); }
+    .danger:hover { background: rgba(239, 68, 68, 0.08); }
+    
+    .kbd {
+      font-family: monospace;
+      padding: 2px 4px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
       color: var(--text);
-      border-radius: 12px;
-      padding: 8px 10px;
-      cursor:pointer;
-      font-weight:800;
+      font-size: 11px;
     }
-    .trash:hover{background: rgba(255,255,255,.08)}
+    .trash {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .trash:hover { color: var(--bad); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
-      <div class="card" style="flex:1 1 330px;">
+      <div class="card" style="flex: 1 1 360px;">
         <h1>순공부시간 기록</h1>
-        <div class="row">
-          <div class="col" style="flex:1;">
-            <div class="stat">
-              <div class="pill">상태: <b id="statusText">대기</b></div>
-              <div class="pill">시작: <b id="startText">-</b></div>
-              <div class="pill" id="backupPill">백업: <b id="backupText">없음</b></div>
-            </div>
-            <div class="muted" style="font-size:12.5px; line-height:1.35;">
-              시작 누르고 앱 꺼져도 OK. 다시 열어서 종료 누르면 그 사이 시간 기록됨. (단축키: <span class="kbd">Space</span>)
-            </div>
-            <div class="muted" id="backupHint" style="font-size:12.5px; line-height:1.35; margin-top:6px;"></div>
-          </div>
+        
+        <div class="timer-display" id="liveTimer">00:00:00</div>
+        
+        <div class="stat">
+          <div class="pill">상태: <b id="statusText">대기</b></div>
+          <div class="pill">시작: <b id="startText">-</b></div>
+          <div class="pill" id="backupPill">백업: <b id="backupText">없음</b></div>
         </div>
-        <div style="margin-top:12px;">
-          <button class="btn primary" id="toggleBtn">공부 시작</button>
+        <div class="muted" style="font-size: 12px; margin-bottom: 12px;">
+          단축키: <span class="kbd">Space</span> (앱을 꺼도 시간은 계속 계산돼요)
+          <div id="backupHint" style="margin-top: 4px; color: var(--warn);"></div>
         </div>
+        
+        <button class="btn primary" id="toggleBtn">공부 시작</button>
+        
         <div class="minirow">
-          <button class="btn" id="exportBtn">내보내기(JSON)</button>
-          <button class="btn" id="importBtn">가져오기(JSON)</button>
-          <button class="btn danger" id="resetBtn">전체 삭제</button>
+          <button class="btn" id="exportBtn">백업</button>
+          <button class="btn" id="importBtn">복원</button>
+          <button class="btn danger" id="resetBtn">전체 초기화</button>
         </div>
         <input type="file" id="fileInput" accept="application/json" style="display:none;" />
       </div>
 
-      <div class="card" style="flex:1 1 330px;">
+      <div class="card" style="flex: 1 1 250px;">
         <h1>요약</h1>
         <div class="list">
           <div class="item">
@@ -338,7 +314,7 @@
           </div>
           <div class="item">
             <div class="left">
-              <div><b>선택한 날짜</b></div>
+              <div><b id="selectedLabelText">선택한 날짜</b></div>
               <small>선택 누적</small>
             </div>
             <div class="dur" id="selectedTotal">0:00</div>
@@ -356,7 +332,7 @@
           </div>
           <div class="nav">
             <button class="iconbtn" id="prevBtn" title="이전 달">‹</button>
-            <button class="iconbtn" id="todayBtn" title="이번 달로">●</button>
+            <button class="iconbtn" id="todayBtn" title="오늘로">●</button>
             <button class="iconbtn" id="nextBtn" title="다음 달">›</button>
           </div>
         </div>
@@ -368,12 +344,11 @@
       </div>
 
       <div class="card">
-        <div class="row" style="margin-bottom:10px;">
+        <div class="row" style="margin-bottom: 12px;">
           <div class="col">
-            <h1 style="margin:0;">세션 목록</h1>
-            <div class="muted" style="font-size:12.5px;">날짜를 클릭하면 그날 기록이 보여. (각 기록 오른쪽 🗑 로 1개 삭제)</div>
+            <h1 style="margin: 0;">세션 목록</h1>
+            <div class="muted" style="font-size: 12px;">선택한 날짜: <b id="selectedLabel" style="color:var(--text)">-</b></div>
           </div>
-          <div class="pill">선택: <b id="selectedLabel">-</b></div>
         </div>
         <div class="list" id="sessionList"></div>
       </div>
@@ -386,10 +361,10 @@
   const RUN_KEY = "study_running_v1";
   const BACKUP_KEY = "study_last_backup_v1";
 
-  /** session: {id:string, start:number(ms), end:number(ms), ms:number} */
   let sessions = loadSessions();
-  let runningStart = loadRunningStart(); // number | null
-  let lastBackup = loadLastBackup(); // number | null
+  let runningStart = loadRunningStart(); 
+  let lastBackup = loadLastBackup(); 
+  let liveTimerInterval = null;
 
   let view = (() => {
     const now = new Date();
@@ -409,6 +384,14 @@
     const h = Math.floor(totalMin / 60);
     const m = totalMin % 60;
     return `${h}:${pad2(m)}`;
+  }
+  function fmtHMS(ms){
+    ms = Math.max(0, ms|0);
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
   }
   function fmtDateTime(ts){
     const d = new Date(ts);
@@ -439,13 +422,12 @@
     return Math.floor(ms / (24*60*60*1000));
   }
   function uid(){
-    // 충돌 거의 없는 가벼운 id
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
   }
 
   // ---------- storage ----------
   function loadSessions(){
-    try{
+    try {
       const raw = localStorage.getItem(LS_KEY);
       if(!raw) return [];
       const arr = JSON.parse(raw);
@@ -454,9 +436,7 @@
         .filter(x => x && typeof x.start==="number" && typeof x.end==="number" && typeof x.ms==="number")
         .map(x => ({ id: (typeof x.id==="string" ? x.id : uid()), start:x.start, end:x.end, ms:x.ms }))
         .sort((a,b)=>a.start-b.start);
-    }catch{
-      return [];
-    }
+    } catch { return []; }
   }
   function saveSessions(){ localStorage.setItem(LS_KEY, JSON.stringify(sessions)); }
 
@@ -487,7 +467,6 @@
     }
   }
 
-  // Split session by date boundaries (자정 분할)
   function splitByMidnight(start, end){
     const out = [];
     let cur = start;
@@ -522,6 +501,7 @@
   const statusText = document.getElementById("statusText");
   const startText = document.getElementById("startText");
   const toggleBtn = document.getElementById("toggleBtn");
+  const liveTimer = document.getElementById("liveTimer");
 
   const monthLabel = document.getElementById("monthLabel");
   const monthAvg = document.getElementById("monthAvg");
@@ -536,6 +516,7 @@
   const selectedTotal = document.getElementById("selectedTotal");
 
   const selectedLabel = document.getElementById("selectedLabel");
+  const selectedLabelText = document.getElementById("selectedLabelText");
   const sessionList = document.getElementById("sessionList");
 
   const exportBtn = document.getElementById("exportBtn");
@@ -548,10 +529,23 @@
   const backupHint = document.getElementById("backupHint");
 
   // ---------- actions ----------
+  function updateLiveTimer() {
+    if (runningStart == null) {
+      liveTimer.textContent = "00:00:00";
+      liveTimer.classList.remove("active");
+      return;
+    }
+    const elapsed = Date.now() - runningStart;
+    liveTimer.textContent = fmtHMS(elapsed);
+    liveTimer.classList.add("active");
+  }
+
   function startStudy(){
     if(runningStart != null) return;
     runningStart = Date.now();
     saveRunningStart(runningStart);
+    
+    liveTimerInterval = setInterval(updateLiveTimer, 1000);
     renderAll();
   }
 
@@ -562,20 +556,21 @@
 
     runningStart = null;
     saveRunningStart(null);
+    clearInterval(liveTimerInterval);
+    updateLiveTimer();
 
-    if(end <= start + 2000){
+    if(end <= start + 2000){ // 2초 미만은 기록 안 함
       renderAll();
       return;
     }
 
     const parts = splitByMidnight(start, end);
-    for(const p of parts){
+    for(const p of parts) {
       sessions.push({ id: uid(), ...p });
     }
     sessions.sort((a,b)=>a.start-b.start);
     saveSessions();
 
-    // 종료한 날짜로 자동 이동
     selected = toDateKey(new Date(end));
     view = { y: new Date(end).getFullYear(), m: new Date(end).getMonth() };
 
@@ -590,8 +585,7 @@
   function deleteSessionById(id){
     const idx = sessions.findIndex(s => s.id === id);
     if(idx < 0) return;
-    const ok = confirm("이 기록 하나만 삭제할까?");
-    if(!ok) return;
+    if(!confirm("이 기록을 삭제할까요?")) return;
 
     sessions.splice(idx, 1);
     saveSessions();
@@ -634,7 +628,6 @@
     a.remove();
     URL.revokeObjectURL(url);
 
-    // export == backup done
     saveLastBackup(Date.now());
     renderBackup();
   }
@@ -642,9 +635,9 @@
   function importJSONFile(file){
     const reader = new FileReader();
     reader.onload = () => {
-      try{
+      try {
         const obj = JSON.parse(String(reader.result||""));
-        if(!obj || !Array.isArray(obj.sessions)) throw new Error("bad");
+        if(!obj || !Array.isArray(obj.sessions)) throw new Error("bad format");
         const imported = obj.sessions
           .filter(x => x && typeof x.start==="number" && typeof x.end==="number" && typeof x.ms==="number")
           .map(x => ({ id: (typeof x.id==="string" ? x.id : uid()), start:x.start, end:x.end, ms:x.ms }));
@@ -652,24 +645,25 @@
         sessions = imported.sort((a,b)=>a.start-b.start);
         saveSessions();
 
-        // 안전하게 러닝은 끔
         runningStart = null;
         saveRunningStart(null);
+        clearInterval(liveTimerInterval);
 
         renderAll();
-        alert("가져오기 완료!");
-      }catch{
-        alert("가져오기 실패: 파일 형식이 이상해.");
+        alert("성공적으로 복원했습니다!");
+      } catch {
+        alert("복원 실패: 올바른 백업 파일이 아닙니다.");
       }
     };
     reader.readAsText(file);
   }
 
   function resetAll(){
-    const ok = confirm("진짜 전체 기록 삭제할 거야?");
-    if(!ok) return;
+    if(!confirm("⚠️ 진짜로 모든 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다.")) return;
     sessions = [];
     runningStart = null;
+    clearInterval(liveTimerInterval);
+    
     localStorage.removeItem(LS_KEY);
     localStorage.removeItem(RUN_KEY);
     localStorage.removeItem(BACKUP_KEY);
@@ -679,18 +673,21 @@
 
   // ---------- render ----------
   function renderTop(){
+    updateLiveTimer();
     if(runningStart == null){
-      statusText.textContent = "대기";
-      toggleBtn.textContent = "공부 시작";
+      statusText.textContent = "대기중";
+      statusText.style.color = "var(--muted)";
+      toggleBtn.textContent = "▶ 공부 시작하기";
       toggleBtn.classList.remove("running");
       toggleBtn.classList.add("primary");
       startText.textContent = "-";
     }else{
-      statusText.textContent = "공부 중";
-      toggleBtn.textContent = "공부 종료 + 기록";
+      statusText.textContent = "공부중!";
+      statusText.style.color = "var(--good)";
+      toggleBtn.textContent = "■ 공부 종료 및 기록 저장";
       toggleBtn.classList.add("running");
       toggleBtn.classList.remove("primary");
-      startText.textContent = fmtDateTime(runningStart);
+      startText.textContent = fmtDateTime(runningStart).slice(11);
     }
   }
 
@@ -699,18 +696,18 @@
     backupPill.classList.remove("warn","good");
 
     if(lastBackup == null){
-      backupText.textContent = "없음";
+      backupText.textContent = "기록 없음";
       backupPill.classList.add("warn");
-      backupHint.textContent = "백업 기록이 없어. 중요한 기록이면 지금 한 번 내보내기 해두는 게 안전해.";
+      backupHint.textContent = "백업 기록이 없어요. 소중한 기록을 위해 '백업' 버튼을 눌러주세요.";
       return;
     }
 
     const age = d ?? 0;
-    backupText.textContent = `${fmtDateTime(lastBackup)} (${age}일 전)`;
+    backupText.textContent = `${age === 0 ? '오늘' : age + '일 전'} 백업됨`;
 
     if(age >= 7){
       backupPill.classList.add("warn");
-      backupHint.textContent = `마지막 백업이 ${age}일 전이야. 오늘 내보내기 한 번 눌러두면 마음 편함.`;
+      backupHint.textContent = `마지막 백업이 ${age}일 전이에요. 안전을 위해 백업을 권장해요.`;
     }else{
       backupPill.classList.add("good");
       backupHint.textContent = "";
@@ -725,7 +722,6 @@
     const first = new Date(y,m,1);
     const firstDow = first.getDay();
     const dim = daysInMonth(y,m);
-
     const prevDim = daysInMonth(y, m-1 < 0 ? 11 : m-1);
     const cells = [];
 
@@ -736,14 +732,12 @@
       if(dayNum < 1){
         const pm = (m-1+12)%12;
         const py = m===0 ? y-1 : y;
-        const d = prevDim + dayNum;
-        cellDate = new Date(py, pm, d);
+        cellDate = new Date(py, pm, prevDim + dayNum);
         out = true;
       }else if(dayNum > dim){
         const nm = (m+1)%12;
         const ny = m===11 ? y+1 : y;
-        const d = dayNum - dim;
-        cellDate = new Date(ny, nm, d);
+        cellDate = new Date(ny, nm, dayNum - dim);
         out = true;
       }else{
         cellDate = new Date(y,m,dayNum);
@@ -751,7 +745,6 @@
 
       const key = toDateKey(cellDate);
       const ms = totals.get(key) || 0;
-
       cells.push({ key, date: cellDate, out, ms });
     }
 
@@ -770,14 +763,11 @@
       if(c.key === todayKey) el.classList.add("today");
       if(c.key === selected) el.classList.add("selected");
 
-      const d = c.date.getDate();
       el.innerHTML = `
         <div class="d">
-          <div>${d}</div>
-          <span>${c.out ? " " : ""}</span>
+          <div>${c.date.getDate()}</div>
         </div>
-        <div class="t">${c.ms>0 ? fmtHM(c.ms) : ""}</div>
-        ${c.ms>0 ? `<div class="badge">+</div>` : ``}
+        <div class="t">${c.ms > 0 ? fmtHM(c.ms) : ""}</div>
       `;
       el.addEventListener("click", () => onSelectDate(c.key));
       daysEl.appendChild(el);
@@ -786,22 +776,18 @@
 
   function renderSummary(){
     const totals = buildDailyTotals();
-    const now = new Date();
-    const todayKey = toDateKey(now);
+    const todayKey = toDateKey(new Date());
 
     let monthSum = 0;
     for(const [k,ms] of totals.entries()){
       if(isSameMonth(k, view.y, view.m)) monthSum += ms;
     }
     monthTotal.textContent = fmtHM(monthSum);
-
-    const todayMs = totals.get(todayKey) || 0;
-    todayTotal.textContent = fmtHM(todayMs);
-
-    const selMs = totals.get(selected) || 0;
-    selectedTotal.textContent = fmtHM(selMs);
+    todayTotal.textContent = fmtHM(totals.get(todayKey) || 0);
+    selectedTotal.textContent = fmtHM(totals.get(selected) || 0);
 
     selectedLabel.textContent = selected;
+    selectedLabelText.textContent = selected.slice(5).replace('-','월 ') + '일';
     document.getElementById("sumMonth").textContent = `${view.y}년 ${view.m+1}월`;
   }
 
@@ -810,11 +796,7 @@
     sessionList.innerHTML = "";
 
     if(list.length === 0){
-      const empty = document.createElement("div");
-      empty.className = "muted";
-      empty.style.padding = "6px 2px";
-      empty.textContent = "이 날짜엔 기록이 없어.";
-      sessionList.appendChild(empty);
+      sessionList.innerHTML = `<div class="muted" style="text-align:center; padding: 20px;">이 날의 공부 기록이 없어요.</div>`;
       return;
     }
 
@@ -823,24 +805,20 @@
     for(const s of reversed){
       const item = document.createElement("div");
       item.className = "item";
-
       item.innerHTML = `
         <div class="left">
           <div><b>${fmtDateTime(s.start).slice(11)}</b> ~ <b>${fmtDateTime(s.end).slice(11)}</b></div>
-          <small>${new Date(s.start).toLocaleDateString("ko-KR")}</small>
         </div>
         <div class="dur">
-          <span>${fmtHM(s.ms)}</span>
-          <button class="trash" title="이 기록 삭제">🗑</button>
+          <span>${fmtHMS(s.ms)}</span>
+          <button class="trash" title="삭제">🗑</button>
         </div>
       `;
 
-      const btn = item.querySelector(".trash");
-      btn.addEventListener("click", (e) => {
+      item.querySelector(".trash").addEventListener("click", (e) => {
         e.stopPropagation();
         deleteSessionById(s.id);
       });
-
       sessionList.appendChild(item);
     }
   }
@@ -879,13 +857,16 @@
   window.addEventListener("keydown", (e) => {
     if(e.code === "Space"){
       const tag = (document.activeElement && document.activeElement.tagName) || "";
-      if(tag === "INPUT" || tag === "TEXTAREA") return;
+      if(tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;
       e.preventDefault();
       toggleStudy();
     }
   });
 
-  // initial render
+  // initial setup
+  if(runningStart != null) {
+    liveTimerInterval = setInterval(updateLiveTimer, 1000);
+  }
   renderAll();
 })();
 </script>
