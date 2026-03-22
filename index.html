@@ -20,7 +20,7 @@
       --warn: #f59e0b;
       --bad: #ef4444;
       --shadow: 0 15px 30px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.15);
-      --radius: 16px; /* 둥글기도 살짝 줄임 */
+      --radius: 16px;
     } 
     * { box-sizing: border-box; }
     body {
@@ -35,34 +35,29 @@
     .wrap {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 20px 16px; /* 상하 여백 축소 */
+      padding: 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px; /* 카드 간 간격 축소 */
+      gap: 16px;
       width: 100%;
     }
     .top {
       display: flex;
-      gap: 16px; /* 상단 카드 간격 축소 */
+      gap: 16px;
       flex-wrap: wrap;
       align-items: stretch;
     }
     .card {
-      background: var(--surface);
+      background: linear-gradient(145deg, #2a3a53, #1f2c41);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 18px; /* 카드 내부 여백 축소 */
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.2);
     }
     .card h1 {
-      font-size: 18px; /* 타이틀 크기 살짝 축소 */
+      font-size: 18px;
       margin: 0 0 12px 0;
       font-weight: 700;
       letter-spacing: -0.5px;
@@ -71,7 +66,7 @@
     
     /* Timer Display */
     .timer-display {
-      font-size: 42px; /* 타이머 폰트 살짝 축소 */
+      font-size: 42px;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       text-align: center;
@@ -88,17 +83,16 @@
       border: 1px solid rgba(255,255,255,0.05);
       background: rgba(255,255,255,0.05);
       color: var(--text);
-      padding: 12px 14px; /* 버튼 높이 축소 */
+      padding: 12px 14px;
       border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.15s ease;
       width: 100%;
       text-align: center;
     }
-    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
-    .btn:active { transform: translateY(0px); }
+    .btn:active { transform: scale(0.97); }
     
     .btn.primary {
       border-color: var(--primary);
@@ -107,9 +101,6 @@
       font-size: 16px;
       padding: 14px;
       box-shadow: 0 6px 12px rgba(59, 130, 246, 0.2);
-    }
-    .btn.primary:hover {
-      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.35);
     }
     
     .btn.running {
@@ -178,9 +169,9 @@
       color: var(--text);
       cursor: pointer;
       font-size: 16px;
-      transition: all 0.2s;
+      transition: transform 0.15s ease;
     }
-    .iconbtn:hover { background: rgba(255,255,255,0.06); }
+    .iconbtn:active { transform: scale(0.92); }
     
     .dow {
       display: grid;
@@ -199,22 +190,22 @@
     }
     .day {
       min-width: 0;
-      border-radius: 10px;
+      border-radius: 8px; /* 모서리를 살짝 덜 둥글게 */
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.1);
-      min-height: 68px; /* 달력 높이 축소 */
+      min-height: 52px; /* 68px에서 대폭 줄여서 정사각형 비율에 가깝게 */
       padding: 6px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px; /* 글자 사이 간격도 줄임 */
       cursor: pointer;
       position: relative;
-      transition: all 0.15s;
+      transition: transform 0.15s ease, background 0.15s ease;
     }
-    .day:hover { transform: translateY(-1px); background: rgba(255,255,255,0.05); }
+    .day:active { transform: scale(0.97); background: rgba(255,255,255,0.05); }
     .day.out { opacity: 0.2; }
-    .day .d { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 13px;}
-    .day .t { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--primary); font-weight: 700; margin-top: auto;}
+    .day .d { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 12px;} /* 날짜 크기 살짝 줄임 */
+    .day .t { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--primary); font-weight: 700; margin-top: auto;} /* 시간 크기 살짝 줄임 */
     .day.today { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     .day.selected { outline: 2px solid var(--good); outline-offset: -2px; }
     
@@ -245,16 +236,7 @@
     .minirow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
     .minirow .btn { width: auto; flex: 1; padding: 10px; font-size: 13px; }
     .danger { border-color: rgba(239, 68, 68, 0.3); color: var(--bad); }
-    .danger:hover { background: rgba(239, 68, 68, 0.08); }
     
-    .kbd {
-      font-family: monospace;
-      padding: 2px 4px;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.05);
-      color: var(--text);
-      font-size: 11px;
-    }
     .trash {
       background: transparent;
       border: none;
@@ -262,9 +244,9 @@
       cursor: pointer;
       font-size: 16px;
       padding: 4px;
-      transition: color 0.2s;
+      transition: opacity 0.15s ease;
     }
-    .trash:hover { color: var(--bad); }
+    .trash:active { opacity: 0.5; }
   </style>
 </head>
 <body>
@@ -281,7 +263,7 @@
           <div class="pill" id="backupPill">백업: <b id="backupText">없음</b></div>
         </div>
         <div class="muted" style="font-size: 12px; margin-bottom: 12px;">
-          단축키: <span class="kbd">Space</span> (앱을 꺼도 시간은 계속 계산돼요)
+          앱을 완전히 꺼도 시간은 계속 계산돼요 ⏱️
           <div id="backupHint" style="margin-top: 4px; color: var(--warn);"></div>
         </div>
         
@@ -328,7 +310,7 @@
         <div class="cal-head">
           <div class="cal-title">
             <div class="month" id="monthLabel">0000년 00월</div>
-            <div class="avg">월 평균 공부시간: <b id="monthAvg">0:00</b></div>
+            <div class="avg">월 평균 공부시간 (<b id="monthDays">0</b>일): <b id="monthAvg">0:00</b></div>
           </div>
           <div class="nav">
             <button class="iconbtn" id="prevBtn" title="이전 달">‹</button>
@@ -505,6 +487,7 @@
 
   const monthLabel = document.getElementById("monthLabel");
   const monthAvg = document.getElementById("monthAvg");
+  const monthDays = document.getElementById("monthDays");
   const daysEl = document.getElementById("days");
 
   const prevBtn = document.getElementById("prevBtn");
@@ -749,10 +732,17 @@
     }
 
     let monthSum = 0;
+    let studyDays = 0; // 공부한 날 수 카운트
+    
     for(const [k,ms] of totals.entries()){
-      if(isSameMonth(k, y, m)) monthSum += ms;
+      if(isSameMonth(k, y, m)) {
+        monthSum += ms;
+        if(ms > 0) studyDays++; // 기록이 있으면 일수 추가
+      }
     }
-    monthAvg.textContent = fmtHM(Math.floor(monthSum / dim));
+    
+    monthDays.textContent = studyDays;
+    monthAvg.textContent = studyDays > 0 ? fmtHM(Math.floor(monthSum / studyDays)) : "0:00";
 
     daysEl.innerHTML = "";
     const todayKey = toDateKey(new Date());
@@ -853,15 +843,6 @@
     fileInput.value = "";
   });
   resetBtn.addEventListener("click", resetAll);
-
-  window.addEventListener("keydown", (e) => {
-    if(e.code === "Space"){
-      const tag = (document.activeElement && document.activeElement.tagName) || "";
-      if(tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;
-      e.preventDefault();
-      toggleStudy();
-    }
-  });
 
   // initial setup
   if(runningStart != null) {
