@@ -147,6 +147,34 @@
       .timer-display { font-size: 36px; margin-bottom: 12px; }
     }
 
+    /* Summary Grid (가로 3열) */
+    .summary-grid {
+      display: flex;
+      gap: 8px;
+    }
+    .summary-card {
+      flex: 1;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 14px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      gap: 12px;
+    }
+    .summary-card .top-text { display: flex; flex-direction: column; gap: 2px; }
+    .summary-card b { font-size: 13px; color: var(--text); word-break: keep-all; line-height: 1.2; }
+    .summary-card small { font-size: 11px; color: var(--muted); }
+    .summary-card .dur {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--primary);
+    }
+
     /* Calendar */
     .cal-head {
       display: flex;
@@ -190,22 +218,22 @@
     }
     .day {
       min-width: 0;
-      border-radius: 8px; /* 모서리를 살짝 덜 둥글게 */
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.1);
-      min-height: 52px; /* 68px에서 대폭 줄여서 정사각형 비율에 가깝게 */
+      min-height: 52px;
       padding: 6px;
       display: flex;
       flex-direction: column;
-      gap: 2px; /* 글자 사이 간격도 줄임 */
+      gap: 2px;
       cursor: pointer;
       position: relative;
       transition: transform 0.15s ease, background 0.15s ease;
     }
     .day:active { transform: scale(0.97); background: rgba(255,255,255,0.05); }
     .day.out { opacity: 0.2; }
-    .day .d { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 12px;} /* 날짜 크기 살짝 줄임 */
-    .day .t { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--primary); font-weight: 700; margin-top: auto;} /* 시간 크기 살짝 줄임 */
+    .day .d { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 12px;}
+    .day .t { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--primary); font-weight: 700; margin-top: auto;}
     .day.today { border-color: var(--primary); background: rgba(59, 130, 246, 0.08); }
     .day.selected { outline: 2px solid var(--good); outline-offset: -2px; }
     
@@ -279,24 +307,24 @@
 
       <div class="card" style="flex: 1 1 250px;">
         <h1>요약</h1>
-        <div class="list">
-          <div class="item">
-            <div class="left">
-              <div><b id="sumMonth">이번 달</b></div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="top-text">
+              <b id="sumMonth">이번 달</b>
               <small>월 누적</small>
             </div>
             <div class="dur" id="monthTotal">0:00</div>
           </div>
-          <div class="item">
-            <div class="left">
-              <div><b>오늘</b></div>
+          <div class="summary-card">
+            <div class="top-text">
+              <b>오늘</b>
               <small>오늘 누적</small>
             </div>
             <div class="dur" id="todayTotal">0:00</div>
           </div>
-          <div class="item">
-            <div class="left">
-              <div><b id="selectedLabelText">선택한 날짜</b></div>
+          <div class="summary-card">
+            <div class="top-text">
+              <b id="selectedLabelText">선택한 날짜</b>
               <small>선택 누적</small>
             </div>
             <div class="dur" id="selectedTotal">0:00</div>
